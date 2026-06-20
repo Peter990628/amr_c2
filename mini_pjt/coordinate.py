@@ -15,6 +15,7 @@ class Coordinate(Node):
 		self.cx_box = None
 		self.cy_box = None
 		self.bridge = CvBridge()
+		self.yolo_recv_time = None
 		
 		self.pub_center = self.create_publisher(PointStamped, 'center_true', 10)
 		self.camera_info_sub = self.create_subscription(CameraInfo, '/robot2/oakd/stereo/camera_info', self.camera_info_callback, 10)
@@ -34,6 +35,7 @@ class Coordinate(Node):
 	def yolo_callback(self, msg):
 		self.cx_box = int(msg.data[0])
 		self.cy_box = int(msg.data[1])
+		self.yolo_recv_time = self.get_clock().now()
 		self.get_logger().info(f"{self.cx_box}, {self.cy_box}")
 		
 		# [오후 2:11]pos_msg.data = [float(x1), float(y1), float(x2), float(y2), cx, cy]
@@ -42,6 +44,14 @@ class Coordinate(Node):
 		if self.K is None:
 			return
 		if self.cx_box is None or self.cy_box is None:
+			return
+		if self.yolo_recv_time is None:
+			return 
+
+		depth_time = Time.from_msg(msg.header.stamp)
+		time_diff = abs((depth_time - self.yolo_recv_time).nanoseconds / 1e9)
+		if time_diff > 0.15:
+			self.get_logger().debug("느리다")
 			return
 		
 		depth_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
