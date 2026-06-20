@@ -1,5 +1,5 @@
 # 'web_true' 토픽을 받으면 시작 지점으로 이동한 뒤 waypoint 순찰을 수행하는 노드.
-
+# ros2 topic pub --once /robot2/web_true std_msgs/msg/Bool "{data: true}"
 
 import rclpy
 from nav2_simple_commander.robot_navigator import TaskResult
@@ -82,7 +82,7 @@ class WaypointNode(Node):
                     self.state = 'IDLE'
 
         elif self.state == 'SPIN_START':
-            self.navigator.spin(spin_dist=6.28318, time_allowance=20)
+            self.navigator.spin(spin_dist=6.28318, time_allowance=40)
             self.state = 'WAIT_SPIN'
 
         elif self.state == 'WAIT_SPIN':
@@ -104,7 +104,7 @@ class WaypointNode(Node):
                 result = self.navigator.getResult()
                 if result == TaskResult.SUCCEEDED:
                     self.route_index += 1
-                    self.navigator.spin(spin_dist=6.28318, time_allowance=20)
+                    self.navigator.spin(spin_dist=6.28318, time_allowance=40)
                     self.state = 'WAIT_SPIN'
                 else:
                     self.get_logger().warn('Failed to reach patrol waypoint.')
