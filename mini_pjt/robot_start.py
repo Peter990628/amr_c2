@@ -1,6 +1,6 @@
 # 'web_true' sub 하면 amr 을 goal 지점으로 이동
 # 도착하면 'goal' 토픽 pub 하는 노드
-
+# ros2 topic pub --once /robot2/web_true std_msgs/msg/Bool "{data: true}" <-- 이거로 테스트!!
 import rclpy
 from nav2_simple_commander.robot_navigator import TaskResult
 from rclpy.node import Node
@@ -26,6 +26,7 @@ class RobotStart(Node):
     def __init__(self):
         super().__init__('robot_start')
         self.is_navigating = False
+        self.web_triggered = False
         self.navigator = TurtleBot4Navigator()
         self.goal_publisher = self.create_publisher(Bool, 'goal', 10)
         self.subscription = self.create_subscription(
@@ -37,6 +38,7 @@ class RobotStart(Node):
         self.subscription  # Prevent unused variable warning
         self.get_logger().info('RobotStart node has been started.')
         self.initialize_navigation()
+        
 
     def initialize_navigation(self):
         initial_pose = self.navigator.getPoseStamped(
@@ -50,13 +52,19 @@ class RobotStart(Node):
     def web_callback(self, msg):
         if not msg.data:
             return
-
+        if self.web_triggered:
+            self.get_logger().info(
+                'web_data is already in subscription. Ignoring request.'
+            )            
+            return
+        
+        
         if self.is_navigating:
             self.get_logger().info(
                 'Navigation is already in progress. Ignoring request.'
             )
             return
-
+        self.web_triggered = True
         self.is_navigating = True
         navigator = self.navigator
 

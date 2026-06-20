@@ -25,7 +25,7 @@ class WaypointNode(Node):
     def __init__(self):
         super().__init__('waypoint_node')
         self.navigator = TurtleBot4Navigator()
-        self.navigator.waitUntilNav2Active()
+        # self.navigator.waitUntilNav2Active()
         self.goal_sub = self.create_subscription(Bool, 'goal', self.goal_callback, 10)
         self.yolo_sub = self.create_subscription(Bool, 'yolo_pos', self.yolo_callback, 10)
         self.center_start_pub = self.create_publisher(Bool, 'center_start', 10) 
