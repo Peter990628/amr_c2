@@ -27,10 +27,10 @@ class RobotStart(Node):
         super().__init__('robot_start')
         self.is_navigating = False
         self.navigator = TurtleBot4Navigator()
-        self.goal_publisher = self.create_publisher(Bool, '/goal', 10)
+        self.goal_publisher = self.create_publisher(Bool, 'goal', 10)
         self.subscription = self.create_subscription(
             Bool,
-            '/web_true',
+            'web_true',
             self.web_callback,
             10
         )
