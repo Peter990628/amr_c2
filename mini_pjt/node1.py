@@ -22,9 +22,9 @@ GOAL_POSES = [
 # =====================
 
 
-class WebSubnode(Node):
+class RobotStart(Node):
     def __init__(self):
-        super().__init__('web_subnode')
+        super().__init__('robot_start')
         self.is_navigating = False
         self.navigator = TurtleBot4Navigator()
         self.goal_publisher = self.create_publisher(Bool, 'goal', 10)
@@ -35,7 +35,7 @@ class WebSubnode(Node):
             10
         )
         self.subscription  # Prevent unused variable warning
-        self.get_logger().info('Web Subnode has been started.')
+        self.get_logger().info('RobotStart node has been started.')
         self.initialize_navigation()
 
     def initialize_navigation(self):
@@ -82,7 +82,7 @@ class WebSubnode(Node):
 
 def main():
     rclpy.init()
-    node = WebSubnode()
+    node = RobotStart()
     try:
         rclpy.spin(node)
     finally:
