@@ -1,5 +1,4 @@
 # 'web_true' 토픽을 받으면 시작 지점으로 이동한 뒤 waypoint 순찰을 수행하는 노드.
-# 'goal' 토픽을 직접 받으면 시작 지점 이동 없이 waypoint 순찰만 수행할 수 있다.
 
 
 import rclpy
@@ -32,7 +31,6 @@ class WaypointNode(Node):
         self.navigator = TurtleBot4Navigator()
         self.initialize_navigation()
         self.web_sub = self.create_subscription(Bool, 'web_true', self.web_callback, 10)
-        # self.goal_sub = self.create_subscription(Bool, 'goal', self.goal_callback, 10)
         self.yolo_sub = self.create_subscription(Bool, 'yolo_pos', self.yolo_callback, 10)
         self.center_start_pub = self.create_publisher(Bool, 'center_start', 10)
 
@@ -57,12 +55,6 @@ class WaypointNode(Node):
 
         self.state = 'START_GOAL'
         self.get_logger().info('Web trigger received. Moving to first goal.')
-
-    def goal_callback(self, msg):
-        if not msg.data or self.state != 'IDLE':
-            return
-
-        self.start_patrol()
 
     def start_patrol(self):
         self.route_index = 0
