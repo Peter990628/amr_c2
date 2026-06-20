@@ -24,6 +24,9 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'yolo_publisher_amr = mini_pjt.yolo_publisher_amr:main',
+            'yolo_subscriber_amr = mini_pjt.yolo_subscriber_amr:main',
+            'yolov8_obj_det_amr = mini_pjt.yolov8_obj_det_amr:main',
         ],
     },
 )
