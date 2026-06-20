@@ -14,13 +14,7 @@ class GoalSubnode(Node):
     def __init__(self):
         super().__init__('goal_subnode')
         self.is_navigating = False
-        self.subscriptions = self.create_subscription(Bool, 'goal', self.goal_callback, 10)
-
-    def goal_callback(self, msg):
-        if msg.data and not self.is_navigating:
-            self.is_navigating = True
-            # Handle goal navigation logic here
-
+        self.subscriptions = self.create_subscription(Bool, '/goal', self.goal_callback, 10)
 
 
 
@@ -39,9 +33,9 @@ class GoalSubnode(Node):
         navigator = TurtleBot4Navigator()
 
         try:
-            # Set initial pose
-            initial_pose = navigator.getPoseStamped([-2.7835135459899902, 3.949268341064453], TurtleBot4Directions.SOUTH)
-            navigator.setInitialPose(initial_pose)
+            # # Set initial pose
+            # initial_pose = navigator.getPoseStamped([-2.7835135459899902, 3.949268341064453], TurtleBot4Directions.SOUTH)
+            # navigator.setInitialPose(initial_pose)
 
             # Wait for Nav2
             navigator.waitUntilNav2Active()
