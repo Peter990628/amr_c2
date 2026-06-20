@@ -32,7 +32,7 @@ class WaypointNode(Node):
         self.initialize_navigation()
         self.web_sub = self.create_subscription(Bool, 'web_true', self.web_callback, 10)
         self.yolo_sub = self.create_subscription(Bool, 'yolo_pos', self.yolo_callback, 10)
-        self.center_start_pub = self.create_publisher(Bool, 'center_start', 10)
+        # self.center_start_pub = self.create_publisher(Bool, 'center_start', 10)
 
         self.timer = self.create_timer(0.2, self.update)
         self.state = 'IDLE'
@@ -117,7 +117,7 @@ class WaypointNode(Node):
         if self.state != 'IDLE':
             self.navigator.cancelTask()
             self.state = 'YOLO_INTERRUPTED'
-            self.center_start_pub.publish(Bool(data=True))
+            # self.center_start_pub.publish(Bool(data=True))
             self.get_logger().info('YOLO detected. Patrol canceled. Centering started.')
 
 
