@@ -32,7 +32,7 @@ class WaypointNode(Node):
         self.navigator = TurtleBot4Navigator()
         self.initialize_navigation()
         self.web_sub = self.create_subscription(Bool, 'web_true', self.web_callback, 10)
-        self.goal_sub = self.create_subscription(Bool, 'goal', self.goal_callback, 10)
+        # self.goal_sub = self.create_subscription(Bool, 'goal', self.goal_callback, 10)
         self.yolo_sub = self.create_subscription(Bool, 'yolo_pos', self.yolo_callback, 10)
         self.center_start_pub = self.create_publisher(Bool, 'center_start', 10)
 
