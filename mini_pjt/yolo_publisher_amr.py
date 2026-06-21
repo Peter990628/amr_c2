@@ -121,7 +121,8 @@ class YOLOPublisherAMR(Node):
         super().destroy_node()
 
 def main():
-    model_path = input("Enter path to model file (.pt, .engine, .onnx): ").strip()
+    # model_path = input("Enter path to model file (.pt, .engine, .onnx): ").strip()
+    model_path = '/home/rokey/rokey_ws/src/mini_pjt/v8_my_best_amrwc.pt' # 조해벽 노트북 기준 경로 
 
     if not os.path.exists(model_path):
         print(f"❌ File not found: {model_path}")

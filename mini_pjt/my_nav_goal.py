@@ -5,6 +5,7 @@ from rclpy.duration import Duration
 from rclpy.time import Time
 
 from geometry_msgs.msg import PointStamped, PoseStamped, Quaternion # 이동 명령
+from std_msgs.msg import Bool
 
 from tf2_geometry_msgs.tf2_geometry_msgs import do_transform_point
 from tf2_ros import Buffer, TransformListener
@@ -24,18 +25,19 @@ class MapNavGoal(Node):
         self.bridge = CvBridge()
         self.K = None
         self.lock = threading.Lock()
+        self.finish_goal_received = False
 
         ns = self.get_namespace()
 
         self.navigator = TurtleBot4Navigator()
-        if not self.navigator.getDockedStatus():
-            self.get_logger().info('Docking before initializing pose')
-            self.navigator.dock()
+        # if not self.navigator.getDockedStatus():
+        #     self.get_logger().info('Docking before initializing pose')
+        #     self.navigator.dock()
 
         # initial_pose = self.navigator.getPoseStamped([0.0, 0.0], TurtleBot4Directions.NORTH)    
         # self.navigator.setInitialPose(initial_pose)
         self.navigator.waitUntilNav2Active()
-        self.navigator.undock()
+        # self.navigator.undock()
 
         self.logged_intrinsics = False
 
@@ -44,10 +46,24 @@ class MapNavGoal(Node):
             'rc_pos',
             self.map_callback,
             10)
+        self.finish_goal_sub = self.create_subscription(
+            Bool,
+            'finish_goal',
+            self.finish_goal_callback,
+            10)
 
     # 로봇의 시야를 보여주는 화면에서 지점을 클릭하면 그곳이 map에서 어디인지 TF 변환
     # PointStamped (pt_camera) -> depth 기준 포인트, goal_pose -> map 기준 포인트
+    def finish_goal_callback(self, msg):
+        if msg.data:
+            self.finish_goal_received = True
+            self.get_logger().info('finish_goal received. Navigation goal is now enabled.')
+
     def map_callback(self, msg):
+        if not self.finish_goal_received:
+            self.get_logger().debug('Ignoring rc_pos until finish_goal is received.')
+            return
+
         self.get_logger().info(
             f"Received goal point: "
             f"({msg.point.x: .2f}, {msg.point.y:.2f})"
@@ -58,7 +74,8 @@ class MapNavGoal(Node):
         goal_pose.header.stamp = self.get_clock().now().to_msg()
         goal_pose.pose.position.x = msg.point.x
         goal_pose.pose.position.y = msg.point.y
-        goal_pose.point.z = 0.0
+        # goal_pose.point.z = 0.0
+        goal_pose.pose.position.z = 0.0
         yaw = 0.0                   # 목표 방향 설정
         qz = math.sin(yaw / 2.0)
         qw = math.cos(yaw / 2.0)

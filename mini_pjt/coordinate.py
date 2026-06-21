@@ -18,9 +18,9 @@ class Coordinate(Node):
 		self.yolo_recv_time = None
 		
 		self.pub_center = self.create_publisher(PointStamped, 'center_true', 10)
-		self.camera_info_sub = self.create_subscription(CameraInfo, '/robot2/oakd/stereo/camera_info', self.camera_info_callback, 10)
-		self.depth_sub = self.create_subscription(Image, '/robot2/oakd/stereo/image_raw', self.depth_callback, 10)
-		self.yolo_sub = self.create_subscription(Float32MultiArray, '/robot2/yolo_pos_amr', self.yolo_callback, 10)
+		self.camera_info_sub = self.create_subscription(CameraInfo, 'oakd/stereo/camera_info', self.camera_info_callback, 10)
+		self.depth_sub = self.create_subscription(Image, 'oakd/stereo/image_raw', self.depth_callback, 10)
+		self.yolo_sub = self.create_subscription(Float32MultiArray, 'yolo_pos_amr', self.yolo_callback, 10)
 		
 	def camera_info_callback(self, msg):
 		if self.K is not None:

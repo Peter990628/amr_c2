@@ -32,7 +32,8 @@ class WaypointNode2(Node):
         self.initialize_navigation()
 
         self.web_sub = self.create_subscription(Bool, 'web_true', self.web_callback, 10)
-        self.yolo_sub = self.create_subscription(Bool, 'yolo_pos', self.yolo_callback, 10)
+        # self.yolo_sub = self.create_subscription(Bool, 'yolo_pos', self.yolo_callback, 10)
+        self.goal_pub = self.create_publisher(Bool, 'finish_goal', 10)
 
         self.timer = self.create_timer(0.2, self.update)
         self.state = 'IDLE'
@@ -79,20 +80,26 @@ class WaypointNode2(Node):
             if self.navigator.isTaskComplete():
                 result = self.navigator.getResult()
                 if result == TaskResult.SUCCEEDED:
+                    if self.route_index == len(ROUTE) - 1:
+                        self.goal_pub.publish(Bool(data=True))
+                        self.get_logger().info('Point 3 reached. Published finish_goal=True.')
                     self.route_index += 1
                     self.state = 'GO_NEXT'
                 else:
                     self.get_logger().warn('Failed to reach waypoint.')
                     self.state = 'IDLE'
 
-    def yolo_callback(self, msg):
-        if not msg.data:
-            return
+    # def yolo_callback(self, msg):
+    #     if not msg.data:
+    #         return
 
-        if self.state != 'IDLE':
-            self.navigator.cancelTask()
-            self.state = 'YOLO_INTERRUPTED'
-            self.get_logger().info('YOLO detected. Waypoint route canceled.')
+    #     if self.state != 'IDLE':
+    #         self.navigator.cancelTask()
+    #         self.state = 'YOLO_INTERRUPTED'
+    #         self.get_logger().info('YOLO detected. Waypoint route canceled.')
+
+
+
 
 
 def main():
