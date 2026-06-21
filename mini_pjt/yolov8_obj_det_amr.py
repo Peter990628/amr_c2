@@ -10,29 +10,35 @@ from pathlib import Path
 import cv2
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 from cv_bridge import CvBridge
 
-class YOLOWebcamProcessor(Node):
-    def __init__(self, model, output_dir, camera_topic='/robot2/oakd/rgb/image_raw'):
-        super().__init__('yolo_webcam_processor')
+
+class YOLOProcessorAMR(Node):
+    def __init__(self, model, output_dir,
+                 camera_topic='/robot2/oakd/rgb/image_raw/compressed',
+                 save_detections=True):
+        super().__init__('yolo_processor_amr')
         self.model = model
         self.output_dir = output_dir
+
         self.csv_output = []
         self.confidences = []
         self.max_object_count = 0
-        self.classNames = model.names  # Use model-provided class names
+
+        self.classNames = model.names
         self.should_shutdown = False
         self.bridge = CvBridge()
+        self.save_detections = save_detections  # 기본 True로 복원
 
+        # QoS depth 10으로 복원
         self.subscription = self.create_subscription(
-            Image, camera_topic, self.image_callback, 10)
+            CompressedImage, camera_topic, self.image_callback, 10)
 
     def image_callback(self, msg):
-        img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        img = self.bridge.compressed_imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
-        results = self.model(img, stream=True)
-        print("Inference done on device:", self.model.device)
+        results = self.model(img, verbose=False)
 
         object_count = 0
         fontScale = 1
@@ -48,23 +54,24 @@ class YOLOWebcamProcessor(Node):
                 label = self.classNames.get(cls, f"class_{cls}")
                 self.confidences.append(confidence)
 
-                org = [x1, y1]
-                cv2.putText(img, f"{label}: {confidence}", org, cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255, 0, 0), 2)
+                cv2.putText(img, f"{label}: {confidence}", (x1, y1),
+                            cv2.FONT_HERSHEY_SIMPLEX, fontScale, (255, 0, 0), 2)
 
                 self.csv_output.append([x1, y1, x2, y2, confidence, label])
                 object_count += 1
 
         self.max_object_count = max(self.max_object_count, object_count)
-        cv2.putText(img, f"Objects_count: {object_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, fontScale, (0, 255, 0), 1)
+        cv2.putText(img, f"Objects_count: {object_count}", (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, fontScale, (0, 255, 0), 1)
 
-        if object_count > 0:
+        # 매 프레임 검출 시 디스크 저장 (복원)
+        if object_count > 0 and self.save_detections:
             filename = f'output_{int(time.time())}.jpg'
             cv2.imwrite(os.path.join(self.output_dir, filename), img)
 
-        display_img = cv2.resize(img, (img.shape[1]*2, img.shape[0]*2))
-        cv2.imshow("Detection", display_img)
+        cv2.imshow("Detection", img)
 
-        key = cv2.waitKey(10)
+        key = cv2.waitKey(1)
         if key == ord('q'):
             print("Shutting down...")
             self.should_shutdown = True
@@ -77,13 +84,13 @@ class YOLOWebcamProcessor(Node):
             writer.writerow(['X1', 'Y1', 'X2', 'Y2', 'Confidence', 'Class'])
             writer.writerows(self.csv_output)
 
-        with open(os.path.join(self.output_dir, 'output.json'), 'w') as f:
-            json.dump(self.csv_output, f)
+        with open(os.path.join(self.output_dir, 'output.json'), 'w') as f:   # 추가
+            json.dump(self.csv_output, f)                                    # 추가
 
         with open(os.path.join(self.output_dir, 'statistics.csv'), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['Max Object Count', 'Average Confidence'])
-            avg_conf = sum(self.confidences)/len(self.confidences) if self.confidences else 0
+            avg_conf = sum(self.confidences) / len(self.confidences) if self.confidences else 0
             writer.writerow([self.max_object_count, avg_conf])
 
 
@@ -110,14 +117,14 @@ def main():
     os.mkdir(output_dir)
 
     rclpy.init()
-    processor = YOLOWebcamProcessor(model, output_dir)
+    processor = YOLOProcessorAMR(model, output_dir)
 
     try:
         rclpy.spin(processor)
     except KeyboardInterrupt:
         print("Shutting down...")
     finally:
-        processor.save_output()
+        processor.save_output()  # 종료 시 결과 저장 (복원)
         processor.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
