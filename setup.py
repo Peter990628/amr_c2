@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'robot_start = mini_pjt.robot_start:main',
             'waypoint_node = mini_pjt.waypoint_node:main',
+            'waypoint_node_2 = mini_pjt.waypoint_node_2:main',
         ],
     },
 )
