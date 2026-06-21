@@ -45,14 +45,14 @@ class Coordinate(Node):
 			return
 		if self.cx_box is None or self.cy_box is None:
 			return
-		if self.yolo_recv_time is None:
-			return 
-
-		depth_time = Time.from_msg(msg.header.stamp)
-		time_diff = abs((depth_time - self.yolo_recv_time).nanoseconds / 1e9)
-		if time_diff > 0.15:
-			self.get_logger().debug("느리다")
-			return
+		# if self.yolo_recv_time is None:
+		# 	return 
+		
+		# depth_time = Time.from_msg(msg.header.stamp)
+		# time_diff = abs((depth_time - self.yolo_recv_time).nanoseconds / 1e9)
+		# if time_diff > 0.15:
+		# 	self.get_logger().debug("느리다")
+		# 	return
 		
 		depth_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
 		
