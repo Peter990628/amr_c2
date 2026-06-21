@@ -15,7 +15,7 @@ class Camtomap(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
-        self.pub = self.create_publisher(PointStamped,'/rc_pos', 10)
+        self.pub = self.create_publisher(PointStamped,'rc_pos', 10)
 
         self.sub = self.create_subscription(PointStamped, 'center_true', self.rc_callback, 10)
 
