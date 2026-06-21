@@ -27,6 +27,9 @@ setup(
             'robot_start = mini_pjt.robot_start:main',
             'waypoint_node = mini_pjt.waypoint_node:main',
             'waypoint_node_2 = mini_pjt.waypoint_node_2:main',
+            'yolo_publisher_amr = mini_pjt.yolo_publisher_amr:main',
+            'yolo_subscriber_amr = mini_pjt.yolo_subscriber_amr:main',
+            'yolov8_obj_det_amr = mini_pjt.yolov8_obj_det_amr:main',
         ],
     },
 )
