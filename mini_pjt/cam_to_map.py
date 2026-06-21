@@ -5,7 +5,7 @@ from rclpy.duration import Duration
 from geometry_msgs.msg import PointStamped
 from tf2_ros import Buffer, TransformListener
 from tf2_geometry_msgs.tf2_geometry_msgs import do_transform_point
-from rclpy import Time
+
 
 class Camtomap(Node):
 
@@ -21,7 +21,8 @@ class Camtomap(Node):
 
     def rc_callback(self, msg):
         try:
-              pt_map = self.tf_buffer.transform(msg, 'map', timeout=Duration(seconds=1.0))
+              tf = self.tf_buffer.lookup_transform('map',msg.header.frame_id, rclpy.time.Time())
+              pt_map = do_transform_point(msg, tf)
               self.pub.publish(pt_map)
 
               self.get_logger().info(f"map: x={pt_map.point.x:.2f}, y={pt_map.point.y:.2f}, z={pt_map.point.z:.2f}")
