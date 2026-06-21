@@ -52,7 +52,7 @@ class YOLOWebcamPublisher(Node):
         self.publish_timer = None
         self.shutdown_timer = None
 
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(2)
 
         if not self.cap.isOpened():
             self.get_logger().error("Failed to open webcam.")
@@ -203,10 +203,10 @@ class YOLOWebcamPublisher(Node):
         self.publish_count += 1
         self.get_logger().info(
             f"Publish True "
-            f"({self.publish_count}/10)"
+            f"({self.publish_count}/20)"
             )
 
-        if self.publish_count >= 10:
+        if self.publish_count >= 50:
             if self.publish_timer is not None:
                 self.publish_timer.cancel()
             self.get_logger().info("Finished publishing True")
@@ -264,10 +264,12 @@ class YOLOWebcamPublisher(Node):
 
 
 def main():
-    model_path = input(
-        "Enter path to model file "
-        "(.pt, .engine, .onnx): "
-    ).strip()
+    # model_path = input(
+    #     "Enter path to model file "
+    #     "(.pt, .engine, .onnx): "
+    # ).strip()
+
+    model_path = '/home/rokey/rokey_ws/src/mini_pjt/v8_my_best_amrwc.pt'
 
     if not os.path.exists(model_path):
         print(
