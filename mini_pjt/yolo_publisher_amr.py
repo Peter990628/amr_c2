@@ -70,9 +70,12 @@ class YOLOPublisherAMR(Node):
                 object_count += 1
 
                 # 가장 신뢰도 높은 박스 추적
-                if confidence > best_conf:
-                    best_conf = confidence
-                    best_box = (x1, y1, x2, y2)
+                # ---- 여기에 필터링 조건 추가 ----
+                if label == "Car" and confidence >= 0.7:
+                    if confidence > best_conf:
+                        best_conf = confidence
+                        best_box = (x1, y1, x2, y2)
+                # --------------------------------
 
 
         # ---- yolo_pos 퍼블리시 ----
