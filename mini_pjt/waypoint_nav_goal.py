@@ -146,7 +146,7 @@ class WaypointNavGoal(Node):
                 self.navigator.cancelTask()
                 self.get_logger().info(f'목표 지점({STOP_DIST}m) 도달. 정지.')
                 # self.get_logger().info(f'목표 지점({dist_to_car}m) 거리 임.')
-            self.state = 'ARRIVED' # 또는 원하는 상태로
+            self.state = 'WAIT_RC_POS' # 또는 원하는 상태로
             return
 
         # 아직 70cm보다 멀면 → 계속 차를 향해 이동
