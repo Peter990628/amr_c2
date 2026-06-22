@@ -1,6 +1,6 @@
 import rclpy 
 from rclpy.node import Node 
-from std_msgs.msg import Float32MultiArray 
+from std_msgs.msg import Float32MultiArray , String 
 import numpy as np
 from sensor_msgs.msg import CameraInfo, Image
 from geometry_msgs.msg import PointStamped
@@ -18,6 +18,7 @@ class Coordinate(Node):
 		self.yolo_recv_time = None
 		
 		self.pub_center = self.create_publisher(PointStamped, 'center_true', 10)
+		# self.pub_depth = self.create_publisher(String, 'depth_distance', 10)
 		self.camera_info_sub = self.create_subscription(CameraInfo, 'oakd/stereo/camera_info', self.camera_info_callback, 10)
 		self.depth_sub = self.create_subscription(Image, 'oakd/stereo/image_raw', self.depth_callback, 10)
 		self.yolo_sub = self.create_subscription(Float32MultiArray, 'yolo_pos_amr', self.yolo_callback, 10)
@@ -68,6 +69,9 @@ class Coordinate(Node):
 			return
 		
 		self.depth = depth/1000.0
+
+		# depth_out = self.depth	
+		# self.pub_depth.publish(depth_out)
 		self.get_logger().info(f"raw depth = {depth}") #단위 확인용 
 		
 		X = (self.cx_box - self.cx_cam) * self.depth / self.fx
