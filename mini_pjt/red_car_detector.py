@@ -50,7 +50,7 @@ class YOLOWebcamPublisher(Node):
         self.publish_count = 0
         self.delay_timer = None
         self.publish_timer = None
-        self.shutdown_timer = None
+        # self.shutdown_timer = None
 
         self.cap = cv2.VideoCapture(1)
 
@@ -203,21 +203,21 @@ class YOLOWebcamPublisher(Node):
         self.publish_count += 1
         self.get_logger().info(
             f"Publish True "
-            f"({self.publish_count}/10)"
+            f"({self.publish_count}/20)"
             )
 
-        if self.publish_count >= 10:
-            if self.publish_timer is not None:
-                self.publish_timer.cancel()
-            self.get_logger().info("Finished publishing True")
-            self.shutdown_timer = self.create_timer(1.0, self.shutdown_callback)
+        # if self.publish_count >= 20:
+        #     if self.publish_timer is not None:
+        #         self.publish_timer.cancel()
+        #     self.get_logger().info("Finished publishing True")
+        #     self.shutdown_timer = self.create_timer(1.0, self.shutdown_callback)
 
 
-    def shutdown_callback(self):
-        self.get_logger().info("Shutting down node...")
-        self.should_shutdown = True
-        if self.shutdown_timer is not None:
-            self.shutdown_timer.cancel()
+    # def shutdown_callback(self):
+    #     self.get_logger().info("Shutting down node...")
+    #     self.should_shutdown = True
+    #     if self.shutdown_timer is not None:
+    #         self.shutdown_timer.cancel()
 
     def save_output(self):
         with open(
