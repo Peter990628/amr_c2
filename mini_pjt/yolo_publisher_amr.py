@@ -12,7 +12,7 @@ import rclpy
 from rclpy.node import Node
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, Bool
 
 
 class YOLOPublisherAMR(Node):
@@ -33,6 +33,8 @@ class YOLOPublisherAMR(Node):
 
         self.publisher = self.create_publisher(CompressedImage, 'processed_image/compressed', 10)
         self.pos_publisher = self.create_publisher(Float32MultiArray, 'yolo_pos_amr', 10)
+        self.amr_false_pub = self.create_publisher(Bool, 'amr_false', 10)
+
         self.should_shutdown = False
         self.save_detections = save_detections
 
@@ -88,6 +90,11 @@ class YOLOPublisherAMR(Node):
             pos_msg.data = [cx, cy]
             self.pos_publisher.publish(pos_msg)
         # --------------------------
+        else:
+            # 검출 안 됐을 때 amr_false 토픽으로 False publish
+            self.amr_false_pub.publish(Bool(data=False))
+            self.get_logger().info('Car 미검출. amr_false=True publish.')
+        # --------------------------------
 
         self.max_object_count = max(self.max_object_count, object_count)
         cv2.putText(img, f"Objects_count: {object_count}", (10, 30),
@@ -121,7 +128,8 @@ class YOLOPublisherAMR(Node):
         super().destroy_node()
 
 def main():
-    model_path = input("Enter path to model file (.pt, .engine, .onnx): ").strip()
+    # model_path = input("Enter path to model file (.pt, .engine, .onnx): ").strip()
+    model_path = '/home/rokey/rokey_ws/src/mini_pjt/v8_my_best_amrwc.pt' # 조해벽 노트북 기준 경로 
 
     if not os.path.exists(model_path):
         print(f"❌ File not found: {model_path}")
