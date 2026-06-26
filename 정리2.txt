@@ -1,0 +1,10 @@
+완료한 것 들 :
+
+
+조해벽 : waypoint_node 만듬 web_true 을 sub 해서 지정된 goal 까지 가고 지정된 waypoint 로 가서 한바퀴 도는 노드 만듦 yolo_pose 토픽 받으면 정지함
+
+박현정 : 
+
+김혜승 : 노드 다 만듬 (웹캠에서 자동차 인식 하고 출발 신호 pub, rc 카 위치 sub 받고 해당 위치 이동하기 )
+
+서영채 : rc car camera상 위치 받아오기 완료 후 map 상 위치는 time stamp만 조정하면 될 가능성이 큼 

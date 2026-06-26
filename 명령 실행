@@ -1,0 +1,29 @@
+ros2 run mini_pjt waypoint_node_2 --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt yolo_publisher_amr --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt yolov8_obj_det_amr --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt coordinate --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt cam_to_map --ros-args -r /tf:=/robot2/tf -r /tf_static:=/robot2/tf_static
+
+ros2 run mini_pjt my_nav_goal --ros-args -r __ns:=/robot2
+
+
+-----------------------------------------------------------------------------------------------------------
+
+이거 실행하면 됨 
+
+
+ros2 run mini_pjt waypoint_nav_goal --ros-args -r __ns:=/robot2 
+
+ros2 run mini_pjt yolo_publisher_amr --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt yolov8_obj_det_amr --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt coordinate --ros-args -r __ns:=/robot2
+
+ros2 run mini_pjt cam_to_map --ros-args -r /tf:=/robot2/tf -r /tf_static:=/robot2/tf_static
+
+ros2 run mini_pjt red_car_detector --ros-args -r __ns:=/robot2

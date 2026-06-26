@@ -10,6 +10,11 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', [
+            'launch/total_test_ver1.launch.py',
+            'launch/total_test_ver2.launch.py',
+            'launch/total_test_ver3_nolocrviznav.launch.py',
+        ]),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,6 +29,17 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'robot_start = mini_pjt.robot_start:main',
+            'waypoint_node = mini_pjt.waypoint_node:main',
+            'waypoint_node_2 = mini_pjt.waypoint_node_2:main',
+            'waypoint_nav_goal = mini_pjt.waypoint_nav_goal:main',
+            'yolo_publisher_amr = mini_pjt.yolo_publisher_amr:main',
+            'yolo_subscriber_amr = mini_pjt.yolo_subscriber_amr:main',
+            'yolov8_obj_det_amr = mini_pjt.yolov8_obj_det_amr:main',
+            'cam_to_map = mini_pjt.cam_to_map:main',
+            'coordinate = mini_pjt.coordinate:main',
+            'red_car_detector = mini_pjt.red_car_detector:main',
+            'my_nav_goal = mini_pjt.my_nav_goal:main',
         ],
     },
 )

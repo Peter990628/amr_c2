@@ -1,0 +1,19 @@
+미니 프로젝트 명령어 순서 (0622, 위에서 아래 순서로,  )
+
+robot-loc
+
+robot-view
+
+robot-nav
+
+yolo_publisher_amr
+
+yolov8_obj_det_amr
+
+coordinate
+
+cam_to_map
+
+waypoint_nav_goal
+
+red_car_detector
